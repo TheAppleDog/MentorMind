@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Mentor Dashboard - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1><i class="fas fa-users"></i> Mentor Dashboard</h1>
+            <p class="text-muted">Welcome, {{ current_user.name }}! Manage your mentees and sessions</p>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-user-graduate"></i> Active Mentees
+                    </h5>
+                    <p class="card-text">{{ students|length }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-calendar"></i> Upcoming Sessions
+                    </h5>
+                    <p class="card-text">{{ upcoming_sessions|length }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-tasks"></i> Pending Tasks
+                    </h5>
+                    <p class="card-text">{{ pending_tasks|length }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-star"></i> Rating
+                    </h5>
+                    <p class="card-text">4.5/5.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Upcoming Sessions -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h5>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_sessions %}
+                        <div class="list-group list-group-flush">
+                            {% for session in upcoming_sessions %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ session.topic }}</h6>
+                                        <small>{{ session.session_date.strftime('%Y-%m-%d') }}</small>
+                                    </div>
+                                    <p class="mb-1 text-muted">{{ session.session_time.strftime('%H:%M') }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <a href="{{ url_for('mentor.sessions') }}" class="btn btn-primary btn-sm mt-3">View All Sessions</a>
+                    {% else %}
+                        <p class="text-muted">No upcoming sessions scheduled</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- My Mentees -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-user-graduate"></i> My Mentees</h5>
+                </div>
+                <div class="card-body">
+                    {% if students %}
+                        <div class="list-group list-group-flush">
+                            {% for student in students %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ student.name }}</h6>
+                                        <a href="{{ url_for('mentor.student_detail', student_id=student.user_id) }}" class="btn btn-sm btn-primary">
+                                            View Profile
+                                        </a>
+                                    </div>
+                                    <p class="mb-1 text-muted">{{ student.email }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <a href="{{ url_for('mentor.students') }}" class="btn btn-success btn-sm mt-3">Manage Mentees</a>
+                    {% else %}
+                        <p class="text-muted">No mentees assigned yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Tasks -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-tasks"></i> Task Assignments</h5>
+                </div>
+                <div class="card-body">
+                    {% if pending_tasks %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Task Title</th>
+                                        <th>Assigned To</th>
+                                        <th>Deadline</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in pending_tasks %}
+                                        <tr>
+                                            <td>{{ task.title }}</td>
+                                            <td>Student #{{ task.student_id }}</td>
+                                            <td>{{ task.deadline.strftime('%Y-%m-%d') if task.deadline else 'N/A' }}</td>
+                                            <td><span class="badge bg-warning">{{ task.status }}</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No pending tasks</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- At-Risk Students Alert Section -->
+    {% if at_risk_students %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5><i class="fas fa-exclamation-triangle"></i> At-Risk Students - Intervention Required</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Risk Level</th>
+                                    <th>Session Attendance</th>
+                                    <th>Task Completion</th>
+                                    <th>Feedback Score</th>
+                                    <th>Progress Rate</th>
+                                    <th>Risk Factors</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for at_risk in at_risk_students %}
+                                    <tr>
+                                        <td>{{ at_risk.student.name }}</td>
+                                        <td>
+                                            {% if at_risk.risk_level == 'critical' %}
+                                                <span class="badge bg-danger">Critical</span>
+                                            {% elif at_risk.risk_level == 'high' %}
+                                                <span class="badge bg-warning">High</span>
+                                            {% else %}
+                                                <span class="badge bg-info">Medium</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {% if at_risk.session_attendance_rate < 70 %}bg-danger{% elif at_risk.session_attendance_rate < 85 %}bg-warning{% else %}bg-success{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {{ at_risk.session_attendance_rate }}%">
+                                                    {{ at_risk.session_attendance_rate }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {% if at_risk.task_completion_rate < 60 %}bg-danger{% elif at_risk.task_completion_rate < 80 %}bg-warning{% else %}bg-success{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {{ at_risk.task_completion_rate }}%">
+                                                    {{ at_risk.task_completion_rate }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if at_risk.avg_feedback_score < 3 %}
+                                                <span class="text-danger"><i class="fas fa-star"></i> {{ at_risk.avg_feedback_score }}/5</span>
+                                            {% elif at_risk.avg_feedback_score < 4 %}
+                                                <span class="text-warning"><i class="fas fa-star"></i> {{ at_risk.avg_feedback_score }}/5</span>
+                                            {% else %}
+                                                <span class="text-success"><i class="fas fa-star"></i> {{ at_risk.avg_feedback_score }}/5</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {% if at_risk.progress_rate < 50 %}bg-danger{% elif at_risk.progress_rate < 75 %}bg-warning{% else %}bg-success{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {{ at_risk.progress_rate }}%">
+                                                    {{ at_risk.progress_rate }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% for factor in at_risk.risk_factors %}
+                                                <span class="badge bg-secondary">{{ factor.replace('_', ' ') }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('mentor.student_detail', student_id=at_risk.student.user_id) }}" class="btn btn-sm btn-primary">
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

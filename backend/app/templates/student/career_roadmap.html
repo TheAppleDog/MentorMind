@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Career Roadmap - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1><i class="fas fa-road"></i> Your Career Roadmap</h1>
+            <p class="text-muted">Personalized growth path towards your career goals</p>
+        </div>
+    </div>
+
+    {% if roadmap %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <!-- Current Stage -->
+                        <div class="mb-4">
+                            <h5>Current Stage</h5>
+                            <div class="alert alert-info">
+                                <strong>{{ roadmap.current_stage }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Next Stage -->
+                        <div class="mb-4">
+                            <h5>Next Stage</h5>
+                            <div class="alert alert-warning">
+                                <strong>{{ roadmap.next_stage }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Suggested Certifications -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-certificate"></i> Suggested Certifications</h5>
+                            {% if roadmap.suggested_certifications %}
+                                <ul class="list-group">
+                                    {% for cert in roadmap.suggested_certifications.split(',') %}
+                                        <li class="list-group-item">
+                                            <i class="fas fa-check-circle text-success"></i> {{ cert.strip() }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">No certifications suggested yet</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Internship Readiness -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-briefcase"></i> Internship Readiness</h5>
+                            <div class="progress" style="height: 30px;">
+                                {% set readiness = roadmap.internship_readiness %}
+                                {% if readiness == 'Ready' %}
+                                    <div class="progress-bar bg-success" style="width: 100%">Ready</div>
+                                {% elif readiness == 'Almost Ready' %}
+                                    <div class="progress-bar bg-warning" style="width: 75%">Almost Ready</div>
+                                {% else %}
+                                    <div class="progress-bar bg-info" style="width: 50%">In Progress</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Placement Stage -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-graduation-cap"></i> Placement Stage</h5>
+                            <div class="alert alert-light">
+                                <strong>{{ roadmap.placement_stage }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">No Career Roadmap Yet</h4>
+                    <p>Your mentor will create a personalized career roadmap for you. In the meantime, discuss your career goals in your next mentoring session!</p>
+                    <a href="{{ url_for('student.sessions') }}" class="btn btn-primary">Schedule a Session</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

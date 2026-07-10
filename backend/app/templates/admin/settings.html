@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Platform Settings - MentorMind Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-cog"></i> Platform Settings</h2>
+            <p class="text-muted">Configure rules, limits, and system parameters</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-sliders-h"></i> Configuration</h5>
+                </div>
+                <form method="POST">
+                    <div class="card-body">
+                        {% if settings %}
+                            {% for setting in settings %}
+                            <div class="mb-4 pb-3 border-bottom">
+                                <label for="{{ setting.setting_key }}" class="form-label">
+                                    <strong>{{ setting.setting_key.replace('_', ' ').title() }}</strong>
+                                </label>
+                                
+                                {% if setting.setting_type == 'string' %}
+                                <input type="text" class="form-control" id="{{ setting.setting_key }}" name="{{ setting.setting_key }}" 
+                                       value="{{ setting.setting_value }}" placeholder="Enter value">
+                                
+                                {% elif setting.setting_type == 'int' %}
+                                <input type="number" class="form-control" id="{{ setting.setting_key }}" name="{{ setting.setting_key }}" 
+                                       value="{{ setting.setting_value }}" placeholder="Enter number">
+                                
+                                {% elif setting.setting_type == 'bool' %}
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="{{ setting.setting_key }}" name="{{ setting.setting_key }}"
+                                           {% if setting.setting_value == 'true' or setting.setting_value == '1' %}checked{% endif %}>
+                                    <label class="form-check-label" for="{{ setting.setting_key }}">
+                                        Enable this feature
+                                    </label>
+                                </div>
+                                
+                                {% elif setting.setting_type == 'json' %}
+                                <textarea class="form-control font-monospace" id="{{ setting.setting_key }}" name="{{ setting.setting_key }}" 
+                                          rows="4" placeholder="Enter JSON format">{{ setting.setting_value }}</textarea>
+                                <small class="text-muted">Must be valid JSON format</small>
+                                
+                                {% endif %}
+                                
+                                <small class="d-block mt-2 text-muted">
+                                    Last updated: {{ setting.created_at.strftime('%Y-%m-%d %H:%M') if setting.created_at else 'Never' }}
+                                </small>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <p class="text-muted">No settings configured yet. Add new settings below.</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-light">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save All Settings
+                        </button>
+                        <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Add New Setting Section -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5><i class="fas fa-plus"></i> Add New Setting</h5>
+                </div>
+                <form method="POST" action="{{ url_for('admin.settings') }}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="new_key" class="form-label">Setting Key</label>
+                                <input type="text" class="form-control" id="new_key" name="new_key" 
+                                       placeholder="e.g., max_session_duration" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="new_type" class="form-label">Data Type</label>
+                                <select class="form-control" id="new_type" name="new_type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="string">String</option>
+                                    <option value="int">Integer</option>
+                                    <option value="bool">Boolean</option>
+                                    <option value="json">JSON</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="new_value" class="form-label">Value</label>
+                                <input type="text" class="form-control" id="new_value" name="new_value" 
+                                       placeholder="Enter value" required>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Examples:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li><strong>max_session_duration</strong> (int): 120</li>
+                                <li><strong>session_notification</strong> (bool): true</li>
+                                <li><strong>platform_maintenance</strong> (bool): false</li>
+                                <li><strong>email_domain_whitelist</strong> (json): ["example.com", "test.org"]</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add Setting
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Settings Documentation Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-book"></i> Common Settings</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3">Session Management</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>max_session_duration</strong><br>
+                            <span class="text-muted">Maximum session length in minutes</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>min_session_gap</strong><br>
+                            <span class="text-muted">Minimum gap between sessions in hours</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>session_reminder_hours</strong><br>
+                            <span class="text-muted">Hours before session to send reminder</span>
+                        </li>
+                    </ul>
+
+                    <hr>
+
+                    <h6 class="mb-3">User Management</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>require_email_verification</strong><br>
+                            <span class="text-muted">Require email verification for signup</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>mentor_approval_required</strong><br>
+                            <span class="text-muted">Admin approval needed for mentors</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>max_mentees_per_mentor</strong><br>
+                            <span class="text-muted">Maximum students per mentor</span>
+                        </li>
+                    </ul>
+
+                    <hr>
+
+                    <h6 class="mb-3">System Configuration</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>platform_maintenance</strong><br>
+                            <span class="text-muted">Put platform in maintenance mode</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>enable_analytics</strong><br>
+                            <span class="text-muted">Enable usage analytics tracking</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>support_email</strong><br>
+                            <span class="text-muted">Support contact email address</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            {% if get_flashed_messages() %}
+            <div class="alert alert-info mt-3" role="alert">
+                <strong><i class="fas fa-check-circle"></i> Note:</strong><br>
+                Settings are cached. Changes take effect within 5 minutes.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 8px;
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0;
+    font-weight: 500;
+}
+</style>
+{% endblock %}

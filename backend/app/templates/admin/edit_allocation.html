@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Allocation - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5><i class="fas fa-edit"></i> Edit Allocation</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">Student</label>
+                            <input type="text" class="form-control" value="#{{ mapping.student_id }} (ID: {{ mapping.student_id }})" readonly>
+                            <input type="hidden" name="student_id" value="{{ mapping.student_id }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="mentor_id" class="form-label">Select Mentor</label>
+                            <select class="form-select" id="mentor_id" name="mentor_id" required>
+                                {% for mentor in mentors %}
+                                    <option value="{{ mentor.user_id }}" {% if mapping.mentor_id == mentor.user_id %}selected{% endif %}>
+                                        {{ mentor.name }} ({{ mentor.email }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="active" {% if mapping.status == 'active' %}selected{% endif %}>Active</option>
+                                <option value="inactive" {% if mapping.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                                <option value="completed" {% if mapping.status == 'completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <p class="text-muted">
+                                <strong>Assigned Date:</strong> {{ mapping.assigned_date.strftime('%Y-%m-%d') }}
+                            </p>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <a href="{{ url_for('admin.mentor_allocation') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1><i class="fas fa-bell"></i> Notifications</h1>
+            
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    {% if notifications %}
+                        {% if notifications|selectattr('is_read', 'equalto', false)|list %}
+                            <div class="mb-3 text-end">
+                                <button onclick="markAllRead(); location.reload();" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-check-double"></i> Mark All Read
+                                </button>
+                            </div>
+                        {% endif %}
+                        <div class="list-group list-group-flush">
+                            {% for notif in notifications %}
+                                <div class="list-group-item {% if not notif.is_read %}bg-light{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ notif.title }}</h6>
+                                        <small>{{ notif.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ notif.message }}</p>
+                                    <small class="text-muted">{{ notif.notification_type }}</small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-4">You have no notifications</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

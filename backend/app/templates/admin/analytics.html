@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1><i class="fas fa-chart-bar"></i> Analytics & Reports</h1>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="text-primary">{{ avg_rating|round(2) }}/5</h3>
+                    <p class="card-text">Avg Mentor Rating</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="text-success">{{ completed_sessions }}/{{ total_sessions }}</h3>
+                    <p class="card-text">Sessions Completed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="text-info">{{ completed_tasks }}/{{ total_tasks }}</h3>
+                    <p class="card-text">Tasks Completed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    {% set completion_rate = ((completed_tasks / total_tasks) * 100)|int if total_tasks > 0 else 0 %}
+                    <h3 class="text-warning">{{ completion_rate }}%</h3>
+                    <p class="card-text">Overall Completion</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-chart-pie"></i> Session Status Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="sessionChart" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-chart-pie"></i> Task Completion Rate</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="taskChart" width="300" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-star"></i> Mentor Rating Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="ratingChart" width="300" height="132"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Session Status Chart
+    const ctxSession = document.getElementById('sessionChart').getContext('2d');
+    new Chart(ctxSession, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'In Progress'],
+            datasets: [{
+                data: [{{ completed_sessions }}, {{ total_sessions - completed_sessions }}],
+                backgroundColor: ['#28a745', '#ffc107']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // Task Completion Chart
+    const ctxTask = document.getElementById('taskChart').getContext('2d');
+    new Chart(ctxTask, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'Pending'],
+            datasets: [{
+                data: [{{ completed_tasks }}, {{ total_tasks - completed_tasks }}],
+                backgroundColor: ['#17a2b8', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // Rating Distribution Chart
+    const ctxRating = document.getElementById('ratingChart').getContext('2d');
+    new Chart(ctxRating, {
+        type: 'bar',
+        data: {
+            labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+            datasets: [{
+                label: 'Number of Ratings',
+                data: [0, 0, 5, 15, 20],
+                backgroundColor: '#007bff',
+                borderColor: '#007bff'
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-line"></i> Your Analytics Dashboard</h2>
+            <p class="text-muted">Track your mentoring performance and student progress</p>
+        </div>
+    </div>
+
+    <!-- Performance Metrics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Total Sessions</h6>
+                    <h3 class="text-primary">{{ total_sessions }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Completed Sessions</h6>
+                    <h3 class="text-success">{{ completed_sessions }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Average Rating</h6>
+                    <h3 class="text-warning">
+                        {% if avg_rating %}
+                            {{ "%.1f"|format(avg_rating) }}/5
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Completion Rate</h6>
+                    <h3 class="text-info">
+                        {% if total_sessions > 0 %}
+                            {{ "%.0f"|format((completed_sessions / total_sessions) * 100) }}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quality Metrics -->
+    {% if quality_metrics %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-star"></i> Quality Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>Overall Rating:</strong> 
+                                <span class="badge bg-warning">{{ quality_metrics.get('overall_rating', 'N/A') }}/5</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Student Satisfaction:</strong> 
+                                <span class="badge bg-info">{{ quality_metrics.get('student_satisfaction', 'N/A') }}%</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Response Time:</strong> 
+                                <span class="badge bg-secondary">{{ quality_metrics.get('response_time_hours', 'N/A') }}h avg</span>
+                            </p>
+                        </div>
+                    </div>
+                    {% if quality_metrics.get('is_top_mentor') %}
+                    <div class="alert alert-success mt-3">
+                        <i class="fas fa-crown"></i> <strong>You're a Top Mentor!</strong> Keep up the excellent work!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Student Performance -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-users"></i> Mentee Performance</h5>
+                </div>
+                <div class="card-body">
+                    {% if mentee_stats %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Total Tasks</th>
+                                    <th>Completed Tasks</th>
+                                    <th>Completion Rate</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in mentee_stats %}
+                                <tr>
+                                    <td><strong>{{ student.name }}</strong></td>
+                                    <td>{{ student.total_tasks }}</td>
+                                    <td>{{ student.completed_tasks }}</td>
+                                    <td>
+                                        {% set rate = (student.completed_tasks / student.total_tasks * 100) if student.total_tasks > 0 else 0 %}
+                                        <div class="progress" style="width: 150px;">
+                                            <div class="progress-bar" role="progressbar" style="width: {{ rate }}%" aria-valuenow="{{ rate }}" aria-valuemin="0" aria-valuemax="100">
+                                                {{ "%.0f"|format(rate) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if rate >= 80 %}
+                                        <span class="badge bg-success">Excellent</span>
+                                        {% elif rate >= 60 %}
+                                        <span class="badge bg-info">Good</span>
+                                        {% elif rate >= 40 %}
+                                        <span class="badge bg-warning">Fair</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Needs Help</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No mentee data available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ url_for('mentor.profile') }}" class="btn btn-outline-primary">Back to Profile</a>
+            <a href="{{ url_for('mentor.sessions') }}" class="btn btn-outline-secondary">View Sessions</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Optional: Add chart library for visual analytics
+// Consider adding Chart.js or similar for better visualization
+</script>
+{% endblock %}

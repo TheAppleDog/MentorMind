@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Quality Monitoring - MentorMind Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-bar"></i> Quality Monitoring Dashboard</h2>
+            <p class="text-muted">Monitor mentor performance and platform quality metrics</p>
+        </div>
+    </div>
+
+    <!-- Top Mentors Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-crown"></i> Top Mentors</h5>
+                </div>
+                <div class="card-body">
+                    {% if top_mentors %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Mentor Name</th>
+                                    <th>Overall Rating</th>
+                                    <th>Total Sessions</th>
+                                    <th>Session Count</th>
+                                    <th>Student Satisfaction</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mentor in top_mentors %}
+                                <tr>
+                                    <td><span class="badge bg-warning">{{ loop.index }}</span></td>
+                                    <td><strong>{{ mentor.user.name }}</strong></td>
+                                    <td>
+                                        <span class="badge bg-success">{{ mentor.quality.overall_rating }}/5</span>
+                                    </td>
+                                    <td>{{ mentor.quality.session_count }}</td>
+                                    <td>{{ mentor.quality.session_count }}</td>
+                                    <td>
+                                        {% set satisfaction = mentor.quality.student_satisfaction if mentor.quality else 0 %}
+                                        <div class="progress" style="width: 100px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ satisfaction }}%" aria-valuenow="{{ satisfaction }}" aria-valuemin="0" aria-valuemax="100">
+                                                {{ satisfaction }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-info">View Details</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No top mentors found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Trends -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-chart-line"></i> Overall Platform Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p><strong>Average Mentor Rating:</strong> <span class="badge bg-info">{{ avg_mentor_rating }}/5</span></p>
+                    </div>
+                    <div class="mb-3">
+                        <p><strong>Active Mentors:</strong> <span class="badge bg-success">{{ active_mentors_count }}</span></p>
+                    </div>
+                    <div class="mb-3">
+                        <p><strong>Total Sessions:</strong> <span class="badge bg-secondary">{{ total_sessions_count }}</span></p>
+                    </div>
+                    <div>
+                        <p><strong>Platform Satisfaction:</strong> <span class="badge bg-warning">{{ platform_satisfaction }}%</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inactive Mentors Warning -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Inactive Mentors (30+ days)</h5>
+                </div>
+                <div class="card-body">
+                    {% if inactive_mentors %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Mentor Name</th>
+                                    <th>Last Active</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mentor in inactive_mentors %}
+                                <tr>
+                                    <td>{{ mentor.user.name }}</td>
+                                    <td>{{ mentor.quality.last_active.strftime('%Y-%m-%d') if mentor.quality and mentor.quality.last_active else 'N/A' }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('admin.change_user_status', user_id=mentor.user.user_id) }}" style="display:inline;">
+                                            <input type="hidden" name="status" value="inactive">
+                                            <button type="submit" class="btn btn-sm btn-warning">Deactivate</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="alert alert-success">All mentors are actively engaged!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Satisfaction Metrics -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-smile"></i> Mentor Satisfaction Rankings</h5>
+                </div>
+                <div class="card-body">
+                    {% if satisfaction_metrics %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Mentor</th>
+                                    <th>Rating</th>
+                                    <th>Session Count</th>
+                                    <th>Combined Score</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for metric in satisfaction_metrics %}
+                                <tr>
+                                    <td><span class="badge bg-secondary">{{ loop.index }}</span></td>
+                                    <td><strong>{{ metric.mentor_name }}</strong></td>
+                                    <td>
+                                        <span class="badge bg-warning">{{ "%.2f"|format(metric.avg_rating) }}/5</span>
+                                    </td>
+                                    <td>{{ metric.session_count }}</td>
+                                    <td>
+                                        {% set score = (metric.avg_rating / 5 * 100 + metric.session_count / 10) / 2 %}
+                                        <div class="progress" style="width: 120px;">
+                                            <div class="progress-bar" role="progressbar" style="width: {{ score }}%" aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="100">
+                                                {{ "%.0f"|format(score) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if metric.avg_rating >= 4.5 %}
+                                        <span class="badge bg-success">Excellent</span>
+                                        {% elif metric.avg_rating >= 4.0 %}
+                                        <span class="badge bg-info">Very Good</span>
+                                        {% elif metric.avg_rating >= 3.5 %}
+                                        <span class="badge bg-primary">Good</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Needs Review</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No satisfaction data available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary">Manage Users</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

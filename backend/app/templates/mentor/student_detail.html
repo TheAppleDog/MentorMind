@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.name }} - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>{{ student.name }}</h1>
+            <p class="text-muted">{{ student.email }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('mentor.assign_task', student_id=student.user_id) }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Assign Task
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Tasks -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-tasks"></i> Assigned Tasks</h5>
+                </div>
+                <div class="card-body">
+                    {% if tasks %}
+                        <div class="list-group list-group-flush">
+                            {% for task in tasks %}
+                                <div class="list-group-item">
+                                    <h6 class="mb-1">{{ task.title }}</h6>
+                                    <p class="mb-1 text-muted">{{ task.description[:50] }}...</p>
+                                    <div class="progress mb-2" style="height: 5px;">
+                                        <div class="progress-bar" style="width: {{ task.progress_percentage }}%"></div>
+                                    </div>
+                                    <small>{{ task.progress_percentage }}% complete</small>
+                                    {% if task.deadline %}
+                                        <small class="d-block text-muted">Due: {{ task.deadline.strftime('%Y-%m-%d') }}</small>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No tasks assigned</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-star"></i> Skills</h5>
+                </div>
+                <div class="card-body">
+                    {% if skills %}
+                        <div class="list-group list-group-flush">
+                            {% for skill in skills %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <h6>{{ skill.skill_name }}</h6>
+                                        <span class="badge bg-info">{{ skill.level }}</span>
+                                    </div>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar bg-success" style="width: {{ skill.proficiency_score }}%"></div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No skills tracked yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session History -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-history"></i> Session History</h5>
+                </div>
+                <div class="card-body">
+                    {% if sessions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Topic</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for session in sessions %}
+                                        <tr>
+                                            <td>{{ session.session_date.strftime('%Y-%m-%d') }}</td>
+                                            <td>{{ session.session_time.strftime('%H:%M') }}</td>
+                                            <td>{{ session.topic }}</td>
+                                            <td><span class="badge bg-{{ 'success' if session.status == 'completed' else 'warning' }}">{{ session.status }}</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No sessions yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

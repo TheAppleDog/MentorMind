@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}Register - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-80">
+        <div class="col-md-6 col-lg-5">
+            <!-- Animated Background Elements -->
+            <div style="position: fixed; top: 150px; left: 5%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite; z-index: -1;"></div>
+            <div style="position: fixed; bottom: 100px; right: 5%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse; z-index: -1;"></div>
+            
+            <div class="card shadow-lg border-0 hover-lift fade-in" style="border-radius: 16px; overflow: hidden; background: white; will-change: auto;">
+                <!-- Animated Header -->
+                <div class="card-header bg-gradient-primary text-white border-0" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 2rem 1.5rem; position: relative; z-index: 1;">
+                    <div class="text-center">
+                        <div style="font-size: 3rem; margin-bottom: 1rem; animation: bounce 2s ease-in-out infinite;">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h2 class="card-title mb-2 fw-bold">Join MentorMind</h2>
+                        <p class="text-white-50 mb-0">Start your mentorship journey today</p>
+                    </div>
+                </div>
+
+                <div class="card-body p-4" style="position: relative; z-index: 1; background: white;">
+                    <form method="POST">
+                        <!-- Full Name Field -->
+                        <div class="mb-3 slide-in-left">
+                            <label for="name" class="form-label fw-600 mb-2">
+                                <i class="fas fa-user me-2 text-primary"></i>Full Name
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                                   required style="border-radius: 10px;">
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="mb-3 slide-in-right">
+                            <label for="email" class="form-label fw-600 mb-2">
+                                <i class="fas fa-envelope me-2 text-primary"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                                   required style="border-radius: 10px;">
+                        </div>
+
+                        <!-- Role Selection -->
+                        <div class="mb-3 slide-in-left">
+                            <label for="role" class="form-label fw-600 mb-2">
+                                <i class="fas fa-briefcase me-2 text-primary"></i>I am a...
+                            </label>
+                            <select class="form-select form-select-lg" id="role" name="role" required style="border-radius: 10px;">
+                                <option value="">Select your role</option>
+                                <option value="student">
+                                    <i class="fas fa-graduation-cap"></i> Student
+                                </option>
+                                <option value="mentor">
+                                    <i class="fas fa-chalkboard-user"></i> Mentor
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3 slide-in-right">
+                            <label for="password" class="form-label fw-600 mb-2">
+                                <i class="fas fa-lock me-2 text-primary"></i>Password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                                       placeholder="••••••••" required style="border-radius: 10px 0 0 10px;">
+                                <button class="btn btn-outline-primary" type="button" id="togglePassword" style="border-radius: 0 10px 10px 0;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">At least 8 characters with mix of letters, numbers, and symbols</small>
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="mb-4 slide-in-left">
+                            <label for="confirm_password" class="form-label fw-600 mb-2">
+                                <i class="fas fa-check-circle me-2 text-primary"></i>Confirm Password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" 
+                                       required style="border-radius: 10px 0 0 10px;">
+                                <button class="btn btn-outline-primary" type="button" id="toggleConfirmPassword" style="border-radius: 0 10px 10px 0;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="text-danger d-none" id="matchError">Passwords do not match</small>
+                        </div>
+
+                        <!-- Terms Agreement -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label fw-500" for="terms">
+                                I agree to the <a href="#" class="text-primary text-decoration-none fw-600">Terms of Service</a> and <a href="#" class="text-primary text-decoration-none fw-600">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <!-- Create Account Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold mb-3" 
+                                style="border-radius: 10px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); 
+                                        border: none; padding: 0.75rem; transition: all 0.3s ease;">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="d-flex align-items-center mb-4">
+                        <hr class="flex-grow-1 border-secondary">
+                        <span class="px-3 text-muted fw-500">Already have an account?</span>
+                        <hr class="flex-grow-1 border-secondary">
+                    </div>
+
+                    <!-- Login Link -->
+                    <p class="text-center text-muted mb-0">
+                        Sign in instead 
+                        <a href="{{ url_for('auth.login') }}" class="text-primary fw-bold text-decoration-none hover-lift">
+                            Login here <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Animated Footer -->
+                <div class="card-footer bg-light border-top-0" style="background: rgba(99, 102, 241, 0.02); padding: 1.5rem; text-align: center;">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1 text-primary"></i>Your information is secure and encrypted
+                    </small>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="row g-3 mt-4 fade-in" style="animation-delay: 0.3s;">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle p-3 d-inline-block mb-2" style="background: rgba(99, 102, 241, 0.1);">
+                            <i class="fas fa-star text-primary fa-lg"></i>
+                        </div>
+                        <h6 class="fw-bold">Expert Mentors</h6>
+                        <small class="text-muted">Learn from industry experts</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle p-3 d-inline-block mb-2" style="background: rgba(99, 102, 241, 0.1);">
+                            <i class="fas fa-rocket text-primary fa-lg"></i>
+                        </div>
+                        <h6 class="fw-bold">Fast Growth</h6>
+                        <small class="text-muted">Accelerate your career</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle p-3 d-inline-block mb-2" style="background: rgba(99, 102, 241, 0.1);">
+                            <i class="fas fa-lock text-primary fa-lg"></i>
+                        </div>
+                        <h6 class="fw-bold">Secure & Safe</h6>
+                        <small class="text-muted">Your data is protected</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Styling -->
+<style>
+    .form-select-lg {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .form-control-lg:focus,
+    .form-select-lg:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+    }
+
+    .min-vh-80 {
+        min-height: 80vh;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-30px); }
+    }
+</style>
+
+<script>
+    // Get form elements
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirm_password');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const roleSelect = document.getElementById('role');
+    const passwordError = document.getElementById('passwordError');
+    const matchError = document.getElementById('matchError');
+
+    // Password validation function
+    function validatePassword(password) {
+        const hasLetters = /[a-zA-Z]/.test(password);
+        const hasNumbers = /\d/.test(password);
+        const hasSymbols = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+        return password.length >= 8 && hasLetters && hasNumbers && hasSymbols;
+    }
+
+    // Check password requirements on input
+    passwordInput?.addEventListener('input', function() {
+        if (this.value && !validatePassword(this.value)) {
+            passwordError.classList.remove('d-none');
+        } else {
+            passwordError.classList.add('d-none');
+        }
+        checkPasswordMatch();
+    });
+
+    // Check password match on input
+    function checkPasswordMatch() {
+        if (confirmInput.value && passwordInput.value !== confirmInput.value) {
+            confirmInput.classList.add('is-invalid');
+            matchError.classList.remove('d-none');
+        } else {
+            confirmInput.classList.remove('is-invalid');
+            matchError.classList.add('d-none');
+        }
+    }
+
+    confirmInput?.addEventListener('input', checkPasswordMatch);
+
+    // Password visibility toggles
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    
+    togglePassword?.addEventListener('click', function() {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+
+    toggleConfirmPassword?.addEventListener('click', function() {
+        const type = confirmInput.type === 'password' ? 'text' : 'password';
+        confirmInput.type = type;
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+
+    // Form submission validation
+    const form = document.querySelector('form');
+    form?.addEventListener('submit', function(e) {
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const confirmPassword = confirmInput.value;
+        const role = roleSelect.value;
+
+        let errors = [];
+
+        // Name validation
+        if (!name) {
+            errors.push('Please enter your full name');
+        } else if (name.length < 3) {
+            errors.push('Name must be at least 3 characters');
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            errors.push('Please enter your email');
+        } else if (!emailRegex.test(email)) {
+            errors.push('Please enter a valid email address');
+        }
+
+        // Role validation
+        if (!role) {
+            errors.push('Please select your role');
+        }
+
+        // Password validation
+        if (!password) {
+            errors.push('Please enter a password');
+        } else if (!validatePassword(password)) {
+            errors.push('Password must be at least 8 characters with letters, numbers, and symbols');
+        }
+
+        // Password match validation
+        if (password !== confirmPassword) {
+            errors.push('Passwords do not match');
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join('\n'));
+        }
+    });
+</script>
+{% endblock %}

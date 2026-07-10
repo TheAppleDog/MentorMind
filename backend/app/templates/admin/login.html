@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-80">
+        <div class="col-md-5 col-lg-4">
+            <!-- Animated Background Elements -->
+            <div style="position: fixed; top: 100px; right: 10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 6s ease-in-out infinite; z-index: -1;"></div>
+            
+            <div class="card shadow-lg border-0 hover-lift fade-in" style="border-radius: 16px; overflow: hidden; background: white; will-change: auto;">
+                <!-- Animated Header -->
+                <div class="card-header bg-gradient-primary text-white border-0" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 2rem 1.5rem; position: relative; z-index: 1;">
+                    <div class="text-center">
+                        <div style="font-size: 3rem; margin-bottom: 1rem; animation: bounce 2s ease-in-out infinite;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h2 class="card-title mb-2 fw-bold">Admin Portal</h2>
+                        <p class="text-white-50 mb-0">Secure administrator access</p>
+                    </div>
+                </div>
+
+                <div class="card-body p-4" style="position: relative; z-index: 1; background: white;">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST">
+                        <!-- Email Field -->
+                        <div class="mb-4 slide-in-left">
+                            <label for="email" class="form-label fw-600 mb-2">
+                                <i class="fas fa-envelope me-2 text-primary"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                                   required style="border-radius: 10px;">
+                        </div>
+                        
+                        <!-- Password Field -->
+                        <div class="mb-4 slide-in-right">
+                            <label for="password" class="form-label fw-600 mb-2">
+                                <i class="fas fa-lock me-2 text-primary"></i>Password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                                       required style="border-radius: 10px 0 0 10px;">
+                                <button class="btn btn-outline-primary" type="button" id="togglePassword" style="border-radius: 0 10px 10px 0;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Remember Me -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                <label class="form-check-label fw-500" for="remember">
+                                    Remember me
+                                </label>
+                            </div>
+                            <a href="#" class="text-primary text-decoration-none fw-500 hover-lift">Forgot password?</a>
+                        </div>
+                        
+                        <!-- Login Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold mb-3" 
+                                style="border-radius: 10px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); 
+                                        border: none; padding: 0.75rem; transition: all 0.3s ease;">
+                            <i class="fas fa-sign-in-alt me-2"></i>Admin Login
+                        </button>
+                    </form>
+                    
+                    <!-- Divider -->
+                    <div class="d-flex align-items-center mb-4">
+                        <hr class="flex-grow-1 border-secondary">
+                        <span class="px-3 text-muted fw-500">or</span>
+                        <hr class="flex-grow-1 border-secondary">
+                    </div>
+                    
+                    <!-- Regular Login Link -->
+                    <p class="text-center text-muted mb-0">
+                        Regular user login? 
+                        <a href="{{ url_for('auth.login') }}" class="text-primary fw-bold text-decoration-none hover-lift">
+                            Go back <i class="fas fa-arrow-left ms-1"></i>
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Animated Footer -->
+                <div class="card-footer bg-light border-top-0" style="background: rgba(99, 102, 241, 0.02); padding: 1.5rem; text-align: center;">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1 text-success"></i>This area is restricted to administrators only
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Password visibility toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    
+    togglePassword?.addEventListener('click', function() {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+
+    // Form validation
+    const form = document.querySelector('form');
+    form?.addEventListener('submit', function(e) {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            e.preventDefault();
+            alert('Please enter a valid email address');
+            return;
+        }
+        
+        // Password validation
+        if (password.length < 8) {
+            e.preventDefault();
+            alert('Password must be at least 8 characters');
+            return;
+        }
+    });
+</script>
+{% endblock %}

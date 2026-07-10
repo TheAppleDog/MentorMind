@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Tracking - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1><i class="fas fa-chart-line"></i> Progress Tracking</h1>
+            <p class="text-muted">Monitor your skill development and task completion</p>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="card-title text-primary">{{ total_tasks }}</h3>
+                    <p class="card-text">Total Tasks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="card-title text-success">{{ completed_tasks }}</h3>
+                    <p class="card-text">Completed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="card-title text-warning">{{ total_tasks - completed_tasks }}</h3>
+                    <p class="card-text">In Progress</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    {% set completion_rate = ((completed_tasks / total_tasks) * 100)|int if total_tasks > 0 else 0 %}
+                    <h3 class="card-title text-info">{{ completion_rate }}%</h3>
+                    <p class="card-text">Completion Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Skills Progress -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-star"></i> Skills Progress</h5>
+                </div>
+                <div class="card-body">
+                    {% if skills %}
+                        {% for skill in skills %}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label class="form-label">{{ skill.skill_name }}</label>
+                                    <span class="badge bg-info">{{ skill.level }}</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: {{ skill.proficiency_score }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ skill.proficiency_score }}% proficiency</small>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No skills tracked yet. Discuss with your mentor to add skills!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks & Chart Right Column -->
+        <div class="col-md-6">
+            <!-- Tasks Overview -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-tasks"></i> Tasks Overview</h5>
+                </div>
+                <div class="card-body">
+                    {% if tasks %}
+                        <div class="list-group list-group-flush">
+                            {% for task in tasks %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ task.title }}</h6>
+                                            <div class="progress" style="height: 4px;">
+                                                <div class="progress-bar bg-success" style="width: {{ task.progress_percentage }}%"></div>
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-{{ 'success' if task.status == 'completed' else 'warning' if task.status == 'in-progress' else 'secondary' }} ms-2">
+                                            {{ task.status }}
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">
+                                        {% if task.deadline %}
+                                            Due: {{ task.deadline.strftime('%Y-%m-%d') }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No tasks assigned yet</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Completion Chart -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-chart-pie"></i> Completion Overview</h5>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                    <div class="chart-container" style="width: 280px; height: 280px;">
+                        <canvas id="completionChart" width="280" height="280"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                <div class="card-body d-flex justify-content-center">
+                    <div class="chart-container" style="width: 280px; height: 280px;">
+                        <canvas id="completionChart" width="280" height="280"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('completionChart').getContext('2d');
+    const completed = {{ completed_tasks }};
+    const remaining = {{ total_tasks - completed_tasks }};
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'In Progress'],
+            datasets: [{
+                data: [completed, remaining],
+                backgroundColor: ['#28a745', '#ffc107']
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

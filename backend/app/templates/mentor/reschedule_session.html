@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Reschedule Session - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-calendar-alt"></i> Reschedule Session</h5>
+                </div>
+                <form method="POST">
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong>Current Session</strong><br>
+                            Date: {{ session.session_date.strftime('%Y-%m-%d') }}<br>
+                            Time: {{ session.session_time.strftime('%H:%M') }}<br>
+                            Topic: {{ session.topic }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="session_date" class="form-label">New Date</label>
+                            <input type="date" class="form-control" id="session_date" name="session_date" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="session_time" class="form-label">New Time</label>
+                            <input type="time" class="form-control" id="session_time" name="session_time" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Reschedule</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Explain why you need to reschedule..."></textarea>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <a href="{{ url_for('mentor.sessions') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Reschedule Session</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

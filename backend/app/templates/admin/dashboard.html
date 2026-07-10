@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+            <p class="text-muted">System Overview and Management</p>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-user-graduate"></i> Total Students
+                    </h5>
+                    <p class="card-text fs-4">{{ total_students }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-user-tie"></i> Total Mentors
+                    </h5>
+                    <p class="card-text fs-4">{{ total_mentors }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-handshake"></i> Active Mappings
+                    </h5>
+                    <p class="card-text fs-4">{{ total_mappings }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-calendar"></i> Total Sessions
+                    </h5>
+                    <p class="card-text fs-4">{{ total_sessions }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Sessions -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-list"></i> Recent Sessions</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_sessions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Student ID</th>
+                                        <th>Mentor ID</th>
+                                        <th>Topic</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for session in recent_sessions[:5] %}
+                                        <tr>
+                                            <td>{{ session.session_date.strftime('%Y-%m-%d') }}</td>
+                                            <td>#{{ session.student_id }}</td>
+                                            <td>#{{ session.mentor_id }}</td>
+                                            <td>{{ session.topic }}</td>
+                                            <td><span class="badge bg-success">{{ session.status }}</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="{{ url_for('admin.sessions') }}" class="btn btn-primary btn-sm">View All Sessions</a>
+                    {% else %}
+                        <p class="text-muted">No sessions yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-tools"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-users"></i> Manage Users
+                    </a>
+                    <a href="{{ url_for('admin.mentor_allocation') }}" class="btn btn-success w-100 mb-2">
+                        <i class="fas fa-link"></i> Allocate Mentors
+                    </a>
+                    <a href="{{ url_for('admin.announcements') }}" class="btn btn-info w-100 mb-2">
+                        <i class="fas fa-bell"></i> Post Announcement
+                    </a>
+                    <a href="{{ url_for('admin.analytics') }}" class="btn btn-warning w-100">
+                        <i class="fas fa-chart-bar"></i> View Analytics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

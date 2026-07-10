@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Add Session Notes - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-pen-fancy"></i> Session Notes</h5>
+                </div>
+                <form method="POST">
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong>Session Information</strong><br>
+                            Date: {{ session.session_date.strftime('%Y-%m-%d') }}<br>
+                            Time: {{ session.session_time.strftime('%H:%M') }}<br>
+                            Topic: {{ session.topic }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Session Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="5" placeholder="Detailed notes about the session..." required></textarea>
+                            <small class="form-text text-muted">Include key discussion points, advice given, and resources shared</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="student_progress" class="form-label">Student Progress Assessment</label>
+                            <select class="form-control" id="student_progress" name="student_progress" required>
+                                <option value="">Select Progress Level</option>
+                                <option value="excellent">Excellent - Great progress</option>
+                                <option value="good">Good - On track</option>
+                                <option value="fair">Fair - Some improvements needed</option>
+                                <option value="poor">Poor - Needs significant work</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="next_focus_areas" class="form-label">Focus Areas for Next Session</label>
+                            <textarea class="form-control" id="next_focus_areas" name="next_focus_areas" rows="3" placeholder="What should we focus on next?"></textarea>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <a href="{{ url_for('mentor.sessions') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Notes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

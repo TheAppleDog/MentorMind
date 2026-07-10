@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - MentorMind{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-cog"></i> Account Settings</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Profile Settings -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3"><i class="fas fa-user"></i> Profile Information</h6>
+                        <form method="POST" action="{{ url_for('mentor.settings') }}">
+                            <input type="hidden" name="action" value="update_profile">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="first_name" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ current_user.first_name }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="last_name" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ current_user.last_name }}" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ current_user.phone or '' }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Profile
+                            </button>
+                        </form>
+                    </div>
+
+                    <hr>
+
+                    <!-- Password Settings -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3"><i class="fas fa-lock"></i> Change Password</h6>
+                        <form method="POST" action="{{ url_for('mentor.settings') }}">
+                            <input type="hidden" name="action" value="change_password">
+                            <div class="mb-3">
+                                <label for="current_password" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="new_password" name="new_password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </form>
+                    </div>
+
+                    <hr>
+
+                    <!-- Account Information -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3"><i class="fas fa-info-circle"></i> Account Information</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Email:</strong> {{ current_user.email }}</p>
+                                <p><strong>Role:</strong> {{ current_user.role.capitalize() }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Member Since:</strong> {{ current_user.created_at.strftime('%B %Y') }}</p>
+                                <p><strong>Last Updated:</strong> {{ current_user.updated_at.strftime('%Y-%m-%d') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
